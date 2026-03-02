@@ -3,13 +3,13 @@
   "configurations": [
     {
       "name": "scheduler",
-      "runtimeExecutable": "node",
+      "runtimeExecutable": "/Volumes/Macintosh HD/Users/diana/.nvm/versions/node/v20.20.0/bin/node",
       "runtimeArgs": ["pipeline/scheduler.js"],
       "port": 3000
     },
     {
       "name": "generate",
-      "runtimeExecutable": "node",
+      "runtimeExecutable": "/Volumes/Macintosh HD/Users/diana/.nvm/versions/node/v20.20.0/bin/node",
       "runtimeArgs": ["generator/generate.js"],
       "port": 3001
     }
