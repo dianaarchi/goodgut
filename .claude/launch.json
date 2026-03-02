@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "scheduler",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["pipeline/scheduler.js"],
+      "port": 3000
+    },
+    {
+      "name": "generate",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["generator/generate.js"],
+      "port": 3001
+    }
+  ]
+}
