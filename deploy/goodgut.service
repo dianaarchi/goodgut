@@ -1,0 +1,19 @@
+[Unit]
+Description=GoodGut Instagram Pipeline
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=goodgut
+WorkingDirectory=/home/goodgut/goodgut
+EnvironmentFile=/home/goodgut/goodgut/.env
+ExecStart=/usr/bin/node pipeline/scheduler.js
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=goodgut
+
+[Install]
+WantedBy=multi-user.target
