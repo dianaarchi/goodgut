@@ -7,7 +7,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 set -euo pipefail
 
-REPO_URL="https://github.com/YOUR_USERNAME/goodgut.git"  # ← update before running
+REPO_URL="https://github.com/dianaarchi/goodgut.git"
 APP_USER="goodgut"
 APP_DIR="/home/${APP_USER}/goodgut"
 SERVICE_NAME="goodgut"
