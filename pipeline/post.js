@@ -4,7 +4,7 @@ import { createReadStream } from 'fs'
 import { stat } from 'fs/promises'
 import { basename, dirname, join } from 'path'
 
-const IG_API = 'https://graph.facebook.com/v21.0'
+const IG_API = 'https://graph.instagram.com/v21.0'
 const SERVER_PORT = 8081
 
 const token  = () => process.env.INSTAGRAM_ACCESS_TOKEN
