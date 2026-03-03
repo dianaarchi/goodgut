@@ -202,14 +202,15 @@ export function renderSlide5(d, P) {
 export function renderSlide6(d, P) {
   return root(P.bg1,
     // Accent triangle bottom-right (rule: diagonal shape, right column, 15% opacity)
-    // Design uses clipPath polygon(100% 0, 100% 100%, 0 100%) — Satori ignores it.
+    // Design: clipPath polygon(100% 0, 100% 100%, 0 100%) — Satori ignores clipPath polygons.
     // CSS border-trick only works for one orientation in Satori; rotation wrapper also fails.
-    // Solution: linear-gradient with a hard diagonal stop at the exact hypotenuse angle.
-    //   Element: width=42% (453.6px), height=1080px.
-    //   Hypotenuse from element (454,0) → (0,1080); perpendicular gradient direction = (1080,454).
-    //   CSS angle = 180° − atan(1080/453.6) = 180° − 67.2° = 112.8°
-    //   Hard stop at 50% places the boundary on the hypotenuse (passes through element centre 227,540).
-    //   transparent=upper-left half, accent=lower-right half → triangle (1080,0)→(1080,1080)→(626,1080)
+    // Solution: linear-gradient with a precisely-angled hard stop.
+    //   Element: 42% wide (453.6px) × 1080px right-anchored.
+    //   Target triangle: (1080,0)→(1080,1080)→(626,1080) — lower-right.
+    //   Hypotenuse: element (454,0)→(0,1080); perpendicular gradient = 112.8°.
+    //   Hard stop at 50% = boundary on hypotenuse (passes through element centre 227,540).
+    //   NOTE: Satori reverses gradient colour regions vs CSS spec — accent FIRST to get
+    //         accent in the lower-right (not upper-left) half.
     h('div', { style: {
       position: 'absolute', top: 0, right: 0,
       width: '42%', height: 1080,
