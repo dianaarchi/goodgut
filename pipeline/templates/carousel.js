@@ -201,22 +201,15 @@ export function renderSlide5(d, P) {
 
 export function renderSlide6(d, P) {
   return root(P.bg1,
-    // Accent triangle bottom-right (design: clipPath polygon(100% 0, 100% 100%, 58% 100%))
-    // Satori has no clipPath support — CSS border trick mirrors slide 8's working pattern.
-    // Slide 8: borderTop + borderRight(transparent) + top:0,left:0  → top-left triangle
-    // Slide 6: borderTop + borderLeft(transparent)  + top:0,right:0 → top-right triangle
-    // approximates design's clipPath: polygon(100% 0, 100% 100%, 58% 100%)
-    // 1080 × (1 − 0.58) = 453.6 → 454px left leg
+    // Accent triangle bottom-right (rule: diagonal shape, right column, 15% opacity)
+    // Satori 0.12.2 supports clipPath natively — use polygon() directly from design source
+    // polygon(100% 0, 100% 100%, 0 100%) within a 42%-wide right column =
+    //   top-right → bottom-right → bottom-left of element = lower-right triangle in viewport
     h('div', { style: {
-      position: 'absolute', top: 0, right: 0,
-      width: 0, height: 0,
-      borderStyle: 'solid',
-      borderTopWidth: 1080,
-      borderTopColor: P.accent,
-      borderLeftWidth: 454,
-      borderLeftColor: 'transparent',
-      borderBottomWidth: 0,
-      borderRightWidth: 0,
+      position: 'absolute', top: 0, right: 0, bottom: 0,
+      width: '42%',
+      backgroundColor: P.accent,
+      clipPath: 'polygon(100% 0, 100% 100%, 0 100%)',
       opacity: 0.15,
     } }),
 
