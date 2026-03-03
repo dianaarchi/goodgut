@@ -202,16 +202,29 @@ export function renderSlide5(d, P) {
 export function renderSlide6(d, P) {
   return root(P.bg1,
     // Accent triangle bottom-right (rule: diagonal shape, right column, 15% opacity)
-    // Satori 0.12.2 supports clipPath natively — use polygon() directly from design source
-    // polygon(100% 0, 100% 100%, 0 100%) within a 42%-wide right column =
-    //   top-right → bottom-right → bottom-left of element = lower-right triangle in viewport
+    // Satori doesn't honour clipPath polygon() — use rotation wrapper instead.
+    // A 1080×1080 container rotated 180° around its center maps the slide-8 pattern
+    // (upper-left triangle at top:0,left:0) → lower-right triangle (1080,0)→(1080,1080)→(626,1080)
+    // 42% of 1080 = 453.6 → 454px, same logic as slide 8's 40% = 432px.
     h('div', { style: {
-      position: 'absolute', top: 0, right: 0, bottom: 0,
-      width: '42%',
-      backgroundColor: P.accent,
-      clipPath: 'polygon(100% 0, 100% 100%, 0 100%)',
-      opacity: 0.15,
-    } }),
+      position: 'absolute', top: 0, left: 0, width: 1080, height: 1080,
+      display: 'flex',
+      transform: 'rotate(180deg)',
+      transformOrigin: '50% 50%',
+    } },
+      h('div', { style: {
+        position: 'absolute', top: 0, left: 0,
+        width: 0, height: 0,
+        borderStyle: 'solid',
+        borderTopWidth: 1080,
+        borderTopColor: P.accent,
+        borderRightWidth: 454,
+        borderRightColor: 'transparent',
+        borderBottomWidth: 0,
+        borderLeftWidth: 0,
+        opacity: 0.15,
+      } })
+    ),
 
     // Number top-right (rule: solid — accent on dark bg)
     h('span', { style: { position: 'absolute', top: 45, right: 62, fontFamily: 'Anton', fontSize: 182, color: P.accent, lineHeight: 1 } },
