@@ -202,18 +202,20 @@ export function renderSlide5(d, P) {
 export function renderSlide6(d, P) {
   return root(P.bg1,
     // Accent triangle bottom-right (design: clipPath polygon(100% 0, 100% 100%, 58% 100%))
-    // Satori has no clipPath support — CSS border trick: right-angle triangle, right+bottom corner
-    // borderBottom = full height leg; borderLeft = transparent creates the diagonal hypotenuse
-    // 1080 × (1 − 0.58) = 453.6 → 454px base
+    // Satori has no clipPath support — CSS border trick mirrors slide 8's working pattern.
+    // Slide 8: borderTop + borderRight(transparent) + top:0,left:0  → top-left triangle
+    // Slide 6: borderTop + borderLeft(transparent)  + top:0,right:0 → top-right triangle
+    // approximates design's clipPath: polygon(100% 0, 100% 100%, 58% 100%)
+    // 1080 × (1 − 0.58) = 453.6 → 454px left leg
     h('div', { style: {
-      position: 'absolute', right: 0, bottom: 0,
+      position: 'absolute', top: 0, right: 0,
       width: 0, height: 0,
       borderStyle: 'solid',
-      borderBottomWidth: 1080,
-      borderBottomColor: P.accent,
+      borderTopWidth: 1080,
+      borderTopColor: P.accent,
       borderLeftWidth: 454,
       borderLeftColor: 'transparent',
-      borderTopWidth: 0,
+      borderBottomWidth: 0,
       borderRightWidth: 0,
       opacity: 0.15,
     } }),
