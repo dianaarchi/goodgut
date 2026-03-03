@@ -213,7 +213,7 @@ export function renderSlide6(d, P) {
     h('div', { style: {
       position: 'absolute', top: 0, right: 0,
       width: '42%', height: 1080,
-      background: `linear-gradient(112.8deg, transparent 50%, ${P.accent} 50%)`,
+      background: `linear-gradient(112.8deg, ${P.accent} 50%, transparent 50%)`,
       opacity: 0.15,
     } }),
 
