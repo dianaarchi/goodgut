@@ -85,17 +85,17 @@ export function renderSlide1(d, P) {
 
 export function renderSlide2(d, P) {
   return root(P.bg2,
-    // Large ghost number top-right
-    h('span', { style: { position: 'absolute', top: 28, right: 40, fontFamily: 'Anton', fontSize: 205, color: P.text2, opacity: 0.08, lineHeight: 1 } },
+    // Solid number top-left (rule: one featured number, solid, grid-anchored)
+    h('span', { style: { position: 'absolute', top: 57, left: 62, fontFamily: 'Anton', fontSize: 205, color: P.accentOnLight, lineHeight: 1 } },
       '01',
     ),
 
-    // Content
+    // Content (rule: slide 2 text is right-aligned)
     h('div', { style: { position: 'absolute', bottom: 91, left: 62, right: 62, display: 'flex', flexDirection: 'column' } },
-      h('h2', { style: { fontFamily: 'Anton', fontSize: 88, color: P.text2, lineHeight: 1.0, margin: '0 0 34px 0', textTransform: 'uppercase', whiteSpace: 'pre-line' } },
+      h('h2', { style: { fontFamily: 'Anton', fontSize: 88, color: P.text2, lineHeight: 1.0, margin: '0 0 34px 0', textTransform: 'uppercase', whiteSpace: 'pre-line', textAlign: 'right' } },
         d.topic01.heading,
       ),
-      h('p', { style: { fontFamily: 'Space Mono', fontSize: 31, lineHeight: 1.55, color: P.muted2, margin: 0 } },
+      h('p', { style: { fontFamily: 'Space Mono', fontSize: 31, lineHeight: 1.55, color: P.muted2, margin: 0, textAlign: 'right' } },
         d.topic01.body,
       ),
     ),
@@ -114,16 +114,11 @@ export function renderSlide2(d, P) {
 
 export function renderSlide3(d, P) {
   return root(P.bg1,
-    // Left accent bar
-    h('div', { style: { position: 'absolute', top: 0, left: 0, width: 17, height: '100%', backgroundColor: P.accent } }),
+    // Left accent bar (rule: 18% column — percentage so layout scales correctly)
+    h('div', { style: { position: 'absolute', top: 0, left: 0, width: '18%', height: '100%', backgroundColor: P.accent } }),
 
-    // Ghost number top-right
-    h('span', { style: { position: 'absolute', top: 28, right: 40, fontFamily: 'Anton', fontSize: 182, color: P.text1, opacity: 0.06, lineHeight: 1 } },
-      '02',
-    ),
-
-    // Content
-    h('div', { style: { position: 'absolute', top: 80, left: 80, right: 62, bottom: 80, display: 'flex', flexDirection: 'column', justifyContent: 'center' } },
+    // Content (rule: starts at 24% to clear the accent column — one number only, in flow)
+    h('div', { style: { position: 'absolute', top: 80, left: '24%', right: 62, bottom: 80, display: 'flex', flexDirection: 'column', justifyContent: 'center' } },
       h('span', { style: { fontFamily: 'Anton', fontSize: 182, color: P.accent, lineHeight: 1, marginBottom: 17 } }, '02'),
       h('h2', { style: { fontFamily: 'Anton', fontSize: 80, color: P.text1, lineHeight: 1.05, margin: '0 0 40px 0', textTransform: 'uppercase', whiteSpace: 'pre-line' } },
         d.topic02.heading,
@@ -151,8 +146,8 @@ export function renderSlide4(d, P) {
       transform: 'translate(-50%, -50%) rotate(-8deg)',
     } }),
 
-    // Number top-right
-    h('span', { style: { position: 'absolute', top: 51, right: 62, fontFamily: 'Anton', fontSize: 148, color: P.muted1, lineHeight: 1 } }, '03'),
+    // Number top-right (rule: break-slide — small and muted, plane is the dominant element)
+    h('span', { style: { position: 'absolute', top: 51, right: 62, fontFamily: 'Anton', fontSize: 45, color: P.muted1, lineHeight: 1 } }, '03'),
 
     // Centered text (on top of tilted plane)
     h('div', { style: {
@@ -192,8 +187,8 @@ export function renderSlide5(d, P) {
       ),
     ),
 
-    // Ghost number bottom-right
-    h('span', { style: { position: 'absolute', bottom: 28, right: 40, fontFamily: 'Anton', fontSize: 205, color: P.accentOnLight, opacity: 0.18, lineHeight: 1 } },
+    // Number bottom-right (rule: solid — colour carries weight, no opacity needed)
+    h('span', { style: { position: 'absolute', bottom: 28, right: 40, fontFamily: 'Anton', fontSize: 205, color: P.accentOnLight, lineHeight: 1 } },
       '03',
     ),
 
@@ -206,18 +201,25 @@ export function renderSlide5(d, P) {
 
 export function renderSlide6(d, P) {
   return root(P.bg1,
-    // Diagonal ghost — low opacity rotated div (approximates clip-path triangle)
+    // Accent triangle bottom-right (design: clipPath polygon(100% 0, 100% 100%, 58% 100%))
+    // Satori has no clipPath support — CSS border trick: right-angle triangle, right+bottom corner
+    // borderBottom = full height leg; borderLeft = transparent creates the diagonal hypotenuse
+    // 1080 × (1 − 0.58) = 453.6 → 454px base
     h('div', { style: {
-      position: 'absolute',
-      top: '20%', right: '-20%',
-      width: '90%', height: '90%',
-      backgroundColor: P.bg2,
-      opacity: 0.06,
-      transform: 'rotate(30deg)',
+      position: 'absolute', right: 0, bottom: 0,
+      width: 0, height: 0,
+      borderStyle: 'solid',
+      borderBottomWidth: 1080,
+      borderBottomColor: P.accent,
+      borderLeftWidth: 454,
+      borderLeftColor: 'transparent',
+      borderTopWidth: 0,
+      borderRightWidth: 0,
+      opacity: 0.15,
     } }),
 
-    // Number top-right
-    h('span', { style: { position: 'absolute', top: 45, right: 62, fontFamily: 'Anton', fontSize: 182, color: P.accent, opacity: 0.15, lineHeight: 1 } },
+    // Number top-right (rule: solid — accent on dark bg)
+    h('span', { style: { position: 'absolute', top: 45, right: 62, fontFamily: 'Anton', fontSize: 182, color: P.accent, lineHeight: 1 } },
       '04',
     ),
 
@@ -302,10 +304,10 @@ export function renderSlide8(d, P) {
       ),
     ),
 
-    // Handle + follow CTA bottom-left
+    // Handle + follow CTA bottom-left (rule: sits on dark triangle — must use colours legible on bg1)
     h('div', { style: { position: 'absolute', bottom: 57, left: 62, display: 'flex', flexDirection: 'column' } },
-      h('span', { style: { fontFamily: 'Anton', fontSize: 40, color: P.bg1 } }, '@the.goodgut.guide'),
-      h('span', { style: { fontFamily: 'Space Mono', fontSize: 23, color: P.bg1, opacity: 0.5, letterSpacing: 6, textTransform: 'uppercase', marginTop: 8 } },
+      h('span', { style: { fontFamily: 'Anton', fontSize: 40, color: P.accent } }, '@the.goodgut.guide'),
+      h('span', { style: { fontFamily: 'Space Mono', fontSize: 23, color: P.text1, opacity: 0.5, letterSpacing: 6, textTransform: 'uppercase', marginTop: 8 } },
         'Follow · Save · Share',
       ),
     ),
