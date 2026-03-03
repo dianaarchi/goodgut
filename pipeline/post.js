@@ -36,10 +36,10 @@ function startServer(dir) {
 // ─── Instagram Graph API helpers ──────────────────────────────────────────────
 
 async function igPost(path, body) {
+  const params = new URLSearchParams({ ...body, access_token: token() })
   const res = await fetch(`${IG_API}${path}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...body, access_token: token() }),
+    body: params,
   })
   const data = await res.json()
   if (!res.ok || data.error) throw new Error(`IG API ${path}: ${JSON.stringify(data)}`)
