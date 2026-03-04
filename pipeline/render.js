@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import satori from 'satori'
 import { Resvg } from '@resvg/resvg-js'
+import sharp from 'sharp'
 import { writeFile, mkdir, readFile } from 'fs/promises'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -33,6 +34,28 @@ async function svgToPng(svgStr, width) {
   return resvg.render().asPng()
 }
 
+// ─── Slide 1 image compositing (multiply: white→accent, black→black) ──────────
+
+async function buildSlide1Bg(genImagePath, accentHex) {
+  const hex = accentHex.replace('#', '')
+  const r = parseInt(hex.slice(0, 2), 16)
+  const g = parseInt(hex.slice(2, 4), 16)
+  const b = parseInt(hex.slice(4, 6), 16)
+
+  // Solid accent background 1080×1080
+  const accentBg = await sharp({
+    create: { width: 1080, height: 1080, channels: 3, background: { r, g, b } },
+  }).png().toBuffer()
+
+  // Composite woodcut on top — multiply: white→accent, black→black
+  const woodcutBuf = await readFile(genImagePath)
+  const composited = await sharp(accentBg)
+    .composite([{ input: woodcutBuf, blend: 'multiply' }])
+    .toBuffer()
+
+  return `data:image/png;base64,${composited.toString('base64')}`
+}
+
 // ─── Carousel render (8 × 1080×1080 PNGs) ────────────────────────────────────
 
 export async function renderCarousel(content) {
@@ -43,8 +66,18 @@ export async function renderCarousel(content) {
   const fonts = await buildFontConfig()
   const d = content.carousel
 
+  // Attempt to build Slide 1 image background (graceful fallback if not found)
+  let slide1Bg = null
+  const genImagePath = join(ROOT, 'assets', 'generated', `image-${content.date}.png`)
+  try {
+    slide1Bg = await buildSlide1Bg(genImagePath, P.accent)
+    console.log(`[render] Slide 1 image variant: ${genImagePath}`)
+  } catch {
+    console.log(`[render] No generated image found for ${content.date} — using standard Slide 1`)
+  }
+
   const slides = [
-    renderSlide1(d, P),
+    renderSlide1(d, P, slide1Bg),
     renderSlide2(d, P),
     renderSlide3(d, P),
     renderSlide4(d, P),

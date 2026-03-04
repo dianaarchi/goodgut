@@ -49,7 +49,53 @@ function root(bg, ...children) {
 
 // ─── Slide 1 — Hook (dark, accent block right) ────────────────────────────────
 
-export function renderSlide1(d, P) {
+export function renderSlide1(d, P, bgImageUri = null) {
+  // ── Image variant: full-bleed woodcut composited on accent bg ─────────────
+  if (bgImageUri) {
+    return root(P.accent,
+      // Full-bleed composited woodcut (multiply: white→accent, ink stays black)
+      h('div', { style: {
+        position: 'absolute', inset: 0,
+        backgroundImage: `url(${bgImageUri})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      } }),
+
+      // Vertical branding top-right (white — readable on both ink and accent)
+      h('div', { style: { position: 'absolute', top: '15%', right: 0, width: '32%',
+                          display: 'flex', transform: 'rotate(-90deg)', transformOrigin: 'right top' } },
+        h('span', { style: { fontFamily: 'Space Mono', fontSize: 26, color: P.text1,
+                              letterSpacing: 9, textTransform: 'uppercase', whiteSpace: 'nowrap' } },
+          'the.goodgut.guide',
+        ),
+      ),
+
+      // Teaser top-left (white)
+      h('span', { style: { position: 'absolute', top: 62, left: 62, fontFamily: 'Space Mono',
+                            fontSize: 28, color: P.text1 } },
+        d.hookTeaser,
+      ),
+
+      // Eyebrow + title bottom-left — all white
+      h('div', { style: { position: 'absolute', bottom: 80, left: 62, right: '10%',
+                          display: 'flex', flexDirection: 'column' } },
+        h('span', { style: { fontFamily: 'Space Mono', fontSize: 23, color: P.text1,
+                              letterSpacing: 11, textTransform: 'uppercase', marginBottom: 28 } },
+          d.hookEyebrow,
+        ),
+        h('h1', { style: { fontFamily: 'Anton', fontSize: 125, fontWeight: 400, color: P.text1,
+                            lineHeight: 0.92, margin: 0, textTransform: 'uppercase', whiteSpace: 'pre-line' } },
+          d.hookTitle,
+        ),
+      ),
+
+      // Arrow (white)
+      h('span', { style: { position: 'absolute', bottom: 80, right: 62,
+                            fontFamily: 'Anton', fontSize: 57, color: P.text1 } }, '→'),
+    )
+  }
+
+  // ── Standard variant (no image) ───────────────────────────────────────────
   return root(P.bg1,
     // Accent block right
     h('div', { style: { position: 'absolute', top: '12%', right: 0, width: '32%', height: '65%', backgroundColor: P.accent } }),
