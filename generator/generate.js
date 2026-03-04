@@ -133,7 +133,7 @@ async function generateGeminiImage(topic, dateStr) {
       'award-winning editorial photography, macro close-up of fermented foods or gut microbiome ' +
       'visualised as bioluminescent organisms, deep blacks, acid green and electric blue accents, ' +
       'cinematic lighting, Wired magazine aesthetic, no text, no people'
-    const prompt = `Gut health visual concept: ${topic}. Style: ${styleHint}`
+    const prompt = `Create a striking visual image for a gut health Instagram post on the topic: "${topic}". Visual style: ${styleHint}. IMPORTANT: zero text, zero words, zero letters or typography anywhere in the image — purely visual, no captions, no labels. No human figures. Symbolic, abstract or close-up composition that evokes the topic visually.`
 
     const result = await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
@@ -169,9 +169,13 @@ export async function generateContent(dateStr) {
   const content = await generateWithClaude()
   console.log(`[generate] Claude response received`)
 
-  // Extract a short topic description for Gemini
-  const topic = content.carousel?.hookEyebrow ?? 'gut health'
-  await generateGeminiImage(topic, meta.dateStr)
+  // Extract topic context for Gemini — combine hook + first topic heading for specificity
+  const topicContext = [
+    content.carousel?.hookEyebrow,
+    content.carousel?.hookTitle?.replace(/\\n/g, ' '),
+    content.carousel?.topic01?.heading,
+  ].filter(Boolean).join(' · ')
+  await generateGeminiImage(topicContext, meta.dateStr)
 
   const output = {
     date: meta.dateStr,
