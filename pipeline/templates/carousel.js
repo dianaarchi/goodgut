@@ -55,7 +55,7 @@ export function renderSlide1(d, P, bgImageUri = null) {
     return root(P.accent,
       // Full-bleed composited woodcut (multiply: white→accent, ink stays black)
       h('div', { style: {
-        position: 'absolute', inset: 0,
+        position: 'absolute', top: 0, right: 0, bottom: 0, left: 0,
         backgroundImage: `url(${bgImageUri})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
