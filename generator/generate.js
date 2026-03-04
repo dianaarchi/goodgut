@@ -127,14 +127,20 @@ async function generateGeminiImage(topic, dateStr) {
 
   try {
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-image' })
 
-    const styleHint = process.env.IMAGE_STYLE || 'brutalist graphic design, acid green on black, bold minimal typography, no people'
+    const styleHint = process.env.IMAGE_STYLE ||
+      'award-winning editorial photography, macro close-up of fermented foods or gut microbiome ' +
+      'visualised as bioluminescent organisms, deep blacks, acid green and electric blue accents, ' +
+      'cinematic lighting, Wired magazine aesthetic, no text, no people'
     const prompt = `Gut health visual concept: ${topic}. Style: ${styleHint}`
 
     const result = await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: { responseModalities: ['IMAGE', 'TEXT'] },
+      generationConfig: {
+        responseModalities: ['IMAGE', 'TEXT'],
+        imageConfig: { aspectRatio: '1:1' },
+      },
     })
 
     for (const part of result.response.candidates[0].content.parts) {
