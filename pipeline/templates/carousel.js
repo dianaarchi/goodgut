@@ -49,7 +49,53 @@ function root(bg, ...children) {
 
 // ─── Slide 1 — Hook (dark, accent block right) ────────────────────────────────
 
-export function renderSlide1(d, P) {
+export function renderSlide1(d, P, bgImageUri = null) {
+  // ── Image variant: full-bleed woodcut composited on accent bg ─────────────
+  if (bgImageUri) {
+    return root(P.accent,
+      // Full-bleed composited woodcut (multiply: white→accent, ink stays black)
+      h('div', { style: {
+        position: 'absolute', top: 0, right: 0, bottom: 0, left: 0,
+        backgroundImage: `url(${bgImageUri})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      } }),
+
+      // Vertical branding top-right (white — readable on both ink and accent)
+      h('div', { style: { position: 'absolute', top: '15%', right: 0, width: '32%',
+                          display: 'flex', transform: 'rotate(-90deg)', transformOrigin: 'right top' } },
+        h('span', { style: { fontFamily: 'Space Mono', fontSize: 26, color: P.text1,
+                              letterSpacing: 9, textTransform: 'uppercase', whiteSpace: 'nowrap' } },
+          'the.goodgut.guide',
+        ),
+      ),
+
+      // Teaser top-left (white)
+      h('span', { style: { position: 'absolute', top: 62, left: 62, fontFamily: 'Space Mono',
+                            fontSize: 28, color: P.text1 } },
+        d.hookTeaser,
+      ),
+
+      // Eyebrow + title bottom-left — all white
+      h('div', { style: { position: 'absolute', bottom: 80, left: 62, right: '10%',
+                          display: 'flex', flexDirection: 'column' } },
+        h('span', { style: { fontFamily: 'Space Mono', fontSize: 23, color: P.text1,
+                              letterSpacing: 11, textTransform: 'uppercase', marginBottom: 28 } },
+          d.hookEyebrow,
+        ),
+        h('h1', { style: { fontFamily: 'Anton', fontSize: 125, fontWeight: 400, color: P.text1,
+                            lineHeight: 0.92, margin: 0, textTransform: 'uppercase', whiteSpace: 'pre-line' } },
+          d.hookTitle,
+        ),
+      ),
+
+      // Arrow (white)
+      h('span', { style: { position: 'absolute', bottom: 80, right: 62,
+                            fontFamily: 'Anton', fontSize: 57, color: P.text1 } }, '→'),
+    )
+  }
+
+  // ── Standard variant (no image) ───────────────────────────────────────────
   return root(P.bg1,
     // Accent block right
     h('div', { style: { position: 'absolute', top: '12%', right: 0, width: '32%', height: '65%', backgroundColor: P.accent } }),
@@ -85,17 +131,17 @@ export function renderSlide1(d, P) {
 
 export function renderSlide2(d, P) {
   return root(P.bg2,
-    // Solid number top-left (rule: one featured number, solid, grid-anchored)
-    h('span', { style: { position: 'absolute', top: 57, left: 62, fontFamily: 'Anton', fontSize: 205, color: P.accentOnLight, lineHeight: 1 } },
+    // Large ghost number top-right
+    h('span', { style: { position: 'absolute', top: 28, right: 40, fontFamily: 'Anton', fontSize: 205, color: P.text2, opacity: 0.08, lineHeight: 1 } },
       '01',
     ),
 
-    // Content (rule: slide 2 text is right-aligned)
+    // Content
     h('div', { style: { position: 'absolute', bottom: 91, left: 62, right: 62, display: 'flex', flexDirection: 'column' } },
-      h('h2', { style: { fontFamily: 'Anton', fontSize: 88, color: P.text2, lineHeight: 1.0, margin: '0 0 34px 0', textTransform: 'uppercase', whiteSpace: 'pre-line', textAlign: 'right' } },
+      h('h2', { style: { fontFamily: 'Anton', fontSize: 88, color: P.text2, lineHeight: 1.0, margin: '0 0 34px 0', textTransform: 'uppercase', whiteSpace: 'pre-line' } },
         d.topic01.heading,
       ),
-      h('p', { style: { fontFamily: 'Space Mono', fontSize: 31, lineHeight: 1.55, color: P.muted2, margin: 0, textAlign: 'right' } },
+      h('p', { style: { fontFamily: 'Space Mono', fontSize: 31, lineHeight: 1.55, color: P.muted2, margin: 0 } },
         d.topic01.body,
       ),
     ),
@@ -114,11 +160,16 @@ export function renderSlide2(d, P) {
 
 export function renderSlide3(d, P) {
   return root(P.bg1,
-    // Left accent bar (rule: 18% column — percentage so layout scales correctly)
-    h('div', { style: { position: 'absolute', top: 0, left: 0, width: '18%', height: '100%', backgroundColor: P.accent } }),
+    // Left accent bar
+    h('div', { style: { position: 'absolute', top: 0, left: 0, width: 17, height: '100%', backgroundColor: P.accent } }),
 
-    // Content (rule: starts at 24% to clear the accent column — one number only, in flow)
-    h('div', { style: { position: 'absolute', top: 80, left: '24%', right: 62, bottom: 80, display: 'flex', flexDirection: 'column', justifyContent: 'center' } },
+    // Ghost number top-right
+    h('span', { style: { position: 'absolute', top: 28, right: 40, fontFamily: 'Anton', fontSize: 182, color: P.text1, opacity: 0.06, lineHeight: 1 } },
+      '02',
+    ),
+
+    // Content
+    h('div', { style: { position: 'absolute', top: 80, left: 80, right: 62, bottom: 80, display: 'flex', flexDirection: 'column', justifyContent: 'center' } },
       h('span', { style: { fontFamily: 'Anton', fontSize: 182, color: P.accent, lineHeight: 1, marginBottom: 17 } }, '02'),
       h('h2', { style: { fontFamily: 'Anton', fontSize: 80, color: P.text1, lineHeight: 1.05, margin: '0 0 40px 0', textTransform: 'uppercase', whiteSpace: 'pre-line' } },
         d.topic02.heading,
@@ -146,8 +197,8 @@ export function renderSlide4(d, P) {
       transform: 'translate(-50%, -50%) rotate(-8deg)',
     } }),
 
-    // Number top-right (rule: break-slide — small and muted, plane is the dominant element)
-    h('span', { style: { position: 'absolute', top: 51, right: 62, fontFamily: 'Anton', fontSize: 45, color: P.muted1, lineHeight: 1 } }, '03'),
+    // Number top-right
+    h('span', { style: { position: 'absolute', top: 51, right: 62, fontFamily: 'Anton', fontSize: 148, color: P.muted1, lineHeight: 1 } }, '03'),
 
     // Centered text (on top of tilted plane)
     h('div', { style: {
@@ -187,8 +238,8 @@ export function renderSlide5(d, P) {
       ),
     ),
 
-    // Number bottom-right (rule: solid — colour carries weight, no opacity needed)
-    h('span', { style: { position: 'absolute', bottom: 28, right: 40, fontFamily: 'Anton', fontSize: 205, color: P.accentOnLight, lineHeight: 1 } },
+    // Ghost number bottom-right
+    h('span', { style: { position: 'absolute', bottom: 28, right: 40, fontFamily: 'Anton', fontSize: 205, color: P.accentOnLight, opacity: 0.18, lineHeight: 1 } },
       '03',
     ),
 
@@ -201,25 +252,18 @@ export function renderSlide5(d, P) {
 
 export function renderSlide6(d, P) {
   return root(P.bg1,
-    // Accent triangle bottom-right (rule: diagonal shape, right column, 15% opacity)
-    // Design: clipPath polygon(100% 0, 100% 100%, 0 100%) — Satori ignores clipPath polygons.
-    // CSS border-trick only works for one orientation in Satori; rotation wrapper also fails.
-    // Solution: linear-gradient with a precisely-angled hard stop.
-    //   Element: 42% wide (453.6px) × 1080px right-anchored.
-    //   Target triangle: (1080,0)→(1080,1080)→(626,1080) — lower-right.
-    //   Hypotenuse: element (454,0)→(0,1080); perpendicular gradient = 112.8°.
-    //   Hard stop at 50% = boundary on hypotenuse (passes through element centre 227,540).
-    //   NOTE: Satori reverses gradient colour regions vs CSS spec — accent FIRST to get
-    //         accent in the lower-right (not upper-left) half.
+    // Diagonal ghost — low opacity rotated div (approximates clip-path triangle)
     h('div', { style: {
-      position: 'absolute', top: 0, right: 0,
-      width: '42%', height: 1080,
-      background: `linear-gradient(112.8deg, ${P.accent} 50%, transparent 50%)`,
-      opacity: 0.15,
+      position: 'absolute',
+      top: '20%', right: '-20%',
+      width: '90%', height: '90%',
+      backgroundColor: P.bg2,
+      opacity: 0.06,
+      transform: 'rotate(30deg)',
     } }),
 
-    // Number top-right (rule: solid — accent on dark bg)
-    h('span', { style: { position: 'absolute', top: 45, right: 62, fontFamily: 'Anton', fontSize: 182, color: P.accent, lineHeight: 1 } },
+    // Number top-right
+    h('span', { style: { position: 'absolute', top: 45, right: 62, fontFamily: 'Anton', fontSize: 182, color: P.accent, opacity: 0.15, lineHeight: 1 } },
       '04',
     ),
 
@@ -304,10 +348,10 @@ export function renderSlide8(d, P) {
       ),
     ),
 
-    // Handle + follow CTA bottom-left (rule: sits on dark triangle — must use colours legible on bg1)
+    // Handle + follow CTA bottom-left
     h('div', { style: { position: 'absolute', bottom: 57, left: 62, display: 'flex', flexDirection: 'column' } },
-      h('span', { style: { fontFamily: 'Anton', fontSize: 40, color: P.accent } }, '@the.goodgut.guide'),
-      h('span', { style: { fontFamily: 'Space Mono', fontSize: 23, color: P.text1, opacity: 0.5, letterSpacing: 6, textTransform: 'uppercase', marginTop: 8 } },
+      h('span', { style: { fontFamily: 'Anton', fontSize: 40, color: P.bg1 } }, '@the.goodgut.guide'),
+      h('span', { style: { fontFamily: 'Space Mono', fontSize: 23, color: P.bg1, opacity: 0.5, letterSpacing: 6, textTransform: 'uppercase', marginTop: 8 } },
         'Follow · Save · Share',
       ),
     ),

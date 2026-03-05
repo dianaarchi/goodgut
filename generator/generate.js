@@ -127,14 +127,20 @@ async function generateGeminiImage(topic, dateStr) {
 
   try {
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-image' })
 
-    const styleHint = process.env.IMAGE_STYLE || 'brutalist graphic design, acid green on black, bold minimal typography, no people'
-    const prompt = `Gut health visual concept: ${topic}. Style: ${styleHint}`
+    const styleHint = process.env.IMAGE_STYLE ||
+      'award-winning editorial photography, macro close-up of fermented foods or gut microbiome ' +
+      'visualised as bioluminescent organisms, deep blacks, acid green and electric blue accents, ' +
+      'cinematic lighting, Wired magazine aesthetic, no text, no people'
+    const prompt = `Create a striking visual image for a gut health Instagram post on the topic: "${topic}". Visual style: ${styleHint}. Composition: surrealist and abstract, asymmetric and off-balance, full-bleed with no empty space — elements bleeding off the edges. NO frames, NO borders, NO decorative borders, NO rectangular or circular frame enclosing the image. The illustration fills the entire canvas edge-to-edge with no containing frame. IMPORTANT: zero text, zero words, zero letters or typography anywhere in the image — purely visual, no captions, no labels. No human figures.`
 
     const result = await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: { responseModalities: ['IMAGE', 'TEXT'] },
+      generationConfig: {
+        responseModalities: ['IMAGE', 'TEXT'],
+        imageConfig: { aspectRatio: '1:1' },
+      },
     })
 
     for (const part of result.response.candidates[0].content.parts) {
@@ -163,9 +169,13 @@ export async function generateContent(dateStr) {
   const content = await generateWithClaude()
   console.log(`[generate] Claude response received`)
 
-  // Extract a short topic description for Gemini
-  const topic = content.carousel?.hookEyebrow ?? 'gut health'
-  await generateGeminiImage(topic, meta.dateStr)
+  // Extract topic context for Gemini — combine hook + first topic heading for specificity
+  const topicContext = [
+    content.carousel?.hookEyebrow,
+    content.carousel?.hookTitle?.replace(/\\n/g, ' '),
+    content.carousel?.topic01?.heading,
+  ].filter(Boolean).join(' · ')
+  await generateGeminiImage(topicContext, meta.dateStr)
 
   const output = {
     date: meta.dateStr,

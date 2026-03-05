@@ -4,7 +4,7 @@ import { createReadStream } from 'fs'
 import { stat } from 'fs/promises'
 import { basename, dirname, join } from 'path'
 
-const IG_API = 'https://graph.instagram.com/v21.0'
+const IG_API = 'https://graph.facebook.com/v21.0'
 const SERVER_PORT = 8081
 
 const token  = () => process.env.INSTAGRAM_ACCESS_TOKEN
@@ -36,10 +36,10 @@ function startServer(dir) {
 // ─── Instagram Graph API helpers ──────────────────────────────────────────────
 
 async function igPost(path, body) {
-  const params = new URLSearchParams({ ...body, access_token: token() })
   const res = await fetch(`${IG_API}${path}`, {
     method: 'POST',
-    body: params,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...body, access_token: token() }),
   })
   const data = await res.json()
   if (!res.ok || data.error) throw new Error(`IG API ${path}: ${JSON.stringify(data)}`)
@@ -110,36 +110,6 @@ export async function postCarousel(pngPaths, caption) {
   } finally {
     server.close()
     console.log('[post] Image server closed')
-  }
-}
-
-// ─── CLI ──────────────────────────────────────────────────────────────────────
-
-if (process.argv[1] === new URL(import.meta.url).pathname) {
-  const { readFile } = await import('fs/promises')
-  const { resolve, join: pjoin } = await import('path')
-
-  const [,, mode, contentPath] = process.argv
-  if (!mode || !contentPath) {
-    console.error('Usage: node pipeline/post.js <carousel|stories> <content-YYYY-MM-DD.json>')
-    process.exit(1)
-  }
-
-  const content = JSON.parse(await readFile(resolve(contentPath), 'utf8'))
-  const date = content.date
-  const dir = resolve('output')
-
-  if (mode === 'carousel') {
-    const pngs = Array.from({ length: 8 }, (_, i) =>
-      pjoin(dir, `${date}-carousel-${String(i + 1).padStart(2, '0')}.png`))
-    await postCarousel(pngs, content.carousel.caption)
-  } else if (mode === 'stories') {
-    const pngs = Array.from({ length: 4 }, (_, i) =>
-      pjoin(dir, `${date}-story-${String(i + 1).padStart(2, '0')}.png`))
-    await postStories(pngs)
-  } else {
-    console.error(`Unknown mode: ${mode}. Use "carousel" or "stories".`)
-    process.exit(1)
   }
 }
 
