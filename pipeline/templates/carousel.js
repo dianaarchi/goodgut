@@ -61,37 +61,37 @@ export function renderSlide1(d, P, bgImageUri = null) {
         backgroundPosition: 'center',
       } }),
 
-      // Vertical branding top-right (white — readable on both ink and accent)
+      // Vertical branding top-right (black)
       h('div', { style: { position: 'absolute', top: '15%', right: 0, width: '32%',
                           display: 'flex', transform: 'rotate(-90deg)', transformOrigin: 'right top' } },
-        h('span', { style: { fontFamily: 'Space Mono', fontSize: 26, color: P.text1,
+        h('span', { style: { fontFamily: 'Space Mono', fontSize: 26, color: P.text2,
                               letterSpacing: 9, textTransform: 'uppercase', whiteSpace: 'nowrap' } },
           'the.goodgut.guide',
         ),
       ),
 
-      // Teaser top-left (white)
+      // Teaser top-left (black)
       h('span', { style: { position: 'absolute', top: 62, left: 62, fontFamily: 'Space Mono',
-                            fontSize: 28, color: P.text1 } },
+                            fontSize: 28, color: P.text2 } },
         d.hookTeaser,
       ),
 
-      // Eyebrow + title bottom-left — all white
+      // Eyebrow + title bottom-left — all black
       h('div', { style: { position: 'absolute', bottom: 80, left: 62, right: '10%',
                           display: 'flex', flexDirection: 'column' } },
-        h('span', { style: { fontFamily: 'Space Mono', fontSize: 23, color: P.text1,
+        h('span', { style: { fontFamily: 'Space Mono', fontSize: 23, color: P.text2,
                               letterSpacing: 11, textTransform: 'uppercase', marginBottom: 28 } },
           d.hookEyebrow,
         ),
-        h('h1', { style: { fontFamily: 'Anton', fontSize: 125, fontWeight: 400, color: P.text1,
+        h('h1', { style: { fontFamily: 'Anton', fontSize: 125, fontWeight: 400, color: P.text2,
                             lineHeight: 0.92, margin: 0, textTransform: 'uppercase', whiteSpace: 'pre-line' } },
           d.hookTitle,
         ),
       ),
 
-      // Arrow (white)
+      // Arrow (black)
       h('span', { style: { position: 'absolute', bottom: 80, right: 62,
-                            fontFamily: 'Anton', fontSize: 57, color: P.text1 } }, '→'),
+                            fontFamily: 'Anton', fontSize: 57, color: P.text2 } }, '→'),
     )
   }
 
