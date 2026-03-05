@@ -49,14 +49,14 @@ function root(bg, ...children) {
 
 // ─── Slide 1 — Hook (dark, accent block right) ────────────────────────────────
 
-export function renderSlide1(d, P, bgImageUri = null) {
+export function renderSlide1(d, P, slide1Bg = null) {
   // ── Image variant: full-bleed woodcut composited on accent bg ─────────────
-  if (bgImageUri) {
+  if (slide1Bg) {
     return root(P.accent,
       // Full-bleed composited woodcut (multiply: white→accent, ink stays black)
       h('div', { style: {
         position: 'absolute', top: 0, right: 0, bottom: 0, left: 0,
-        backgroundImage: `url(${bgImageUri})`,
+        backgroundImage: `url(${slide1Bg.uri})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       } }),
@@ -70,23 +70,24 @@ export function renderSlide1(d, P, bgImageUri = null) {
         ),
       ),
 
-      // Teaser top-left (black)
-      h('span', { style: { position: 'absolute', top: 62, left: 62, fontFamily: 'Space Mono',
-                            fontSize: 28, color: P.text2 } },
+      // Teaser — placed at cleanest grid-snapped row in top 25%
+      h('span', { style: { position: 'absolute', top: slide1Bg.teaserTop, left: 62,
+                            fontFamily: 'Space Mono', fontSize: 28, color: P.text2 } },
         d.hookTeaser,
       ),
 
-      // Eyebrow + title bottom-left — all black
-      h('div', { style: { position: 'absolute', bottom: 80, left: 62, right: '10%',
-                          display: 'flex', flexDirection: 'column' } },
-        h('span', { style: { fontFamily: 'Space Mono', fontSize: 23, color: P.text2,
-                              letterSpacing: 11, textTransform: 'uppercase', marginBottom: 28 } },
-          d.hookEyebrow,
-        ),
-        h('h1', { style: { fontFamily: 'Anton', fontSize: 125, fontWeight: 400, color: P.text2,
-                            lineHeight: 0.92, margin: 0, textTransform: 'uppercase', whiteSpace: 'pre-line' } },
-          d.hookTitle,
-        ),
+      // Eyebrow — independently placed at cleanest grid-snapped row in mid band
+      h('span', { style: { position: 'absolute', top: slide1Bg.eyebrowTop, left: 62,
+                            fontFamily: 'Space Mono', fontSize: 23, color: P.text2,
+                            letterSpacing: 11, textTransform: 'uppercase' } },
+        d.hookEyebrow,
+      ),
+
+      // Title — anchored bottom-left, always fixed
+      h('h1', { style: { position: 'absolute', bottom: 80, left: 62, right: '10%',
+                          fontFamily: 'Anton', fontSize: 125, fontWeight: 400, color: P.text2,
+                          lineHeight: 0.92, margin: 0, textTransform: 'uppercase', whiteSpace: 'pre-line' } },
+        d.hookTitle,
       ),
 
       // Arrow (black)
