@@ -36,6 +36,55 @@ async function svgToPng(svgStr, width) {
 
 // ─── Slide 1 image compositing (multiply: white→accent, black→black) ──────────
 
+// Snap a pixel value to the nearest design-grid multiple (62px = safe margin unit)
+function snapToGrid(value, unit = 62) {
+  return Math.round(value / unit) * unit
+}
+
+// Analyse the composited image at low resolution to find clean (low-ink) zones
+// for the two small text elements, snapped to the design grid.
+async function findTextPositions(composedBuf) {
+  const GRID = 24
+  const { data } = await sharp(composedBuf)
+    .resize(GRID, GRID, { fit: 'fill' })
+    .grayscale()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+
+  // Average brightness of left 65% of a grid row (right side holds branding)
+  function rowBrightness(r) {
+    const cols = Math.floor(GRID * 0.65)
+    let sum = 0
+    for (let c = 0; c < cols; c++) sum += data[r * GRID + c]
+    return sum / cols
+  }
+
+  // Index of brightest row within [r0, r1)
+  function brightestRow(r0, r1) {
+    let best = r0, bestB = -1
+    for (let r = r0; r < r1; r++) {
+      const b = rowBrightness(r)
+      if (b > bestB) { bestB = b; best = r }
+    }
+    return best
+  }
+
+  // Map grid-row centre to canvas pixels, then snap to 62px grid
+  const toSnappedPixel = (r, min, max) =>
+    Math.max(min, Math.min(max, snapToGrid(Math.round((r + 0.5) / GRID * 1080))))
+
+  // Teaser: search top 25% (rows 0–5), stay in 62–248px (grid rows 1–4)
+  const teaserRow = brightestRow(0, 6)
+  const teaserTop = toSnappedPixel(teaserRow, 62, 248)
+
+  // Eyebrow: search 42–71% band (rows 10–17), stay in 496–744px (grid rows 8–12)
+  // This band sits above the title which anchors at bottom: 80 (~770px from top)
+  const eyebrowRow = brightestRow(10, 17)
+  const eyebrowTop = toSnappedPixel(eyebrowRow, 496, 744)
+
+  return { teaserTop, eyebrowTop }
+}
+
 async function buildSlide1Bg(genImagePath, accentHex) {
   const hex = accentHex.replace('#', '')
   const r = parseInt(hex.slice(0, 2), 16)
@@ -53,7 +102,11 @@ async function buildSlide1Bg(genImagePath, accentHex) {
     .composite([{ input: woodcutBuf, blend: 'multiply' }])
     .toBuffer()
 
-  return `data:image/png;base64,${composited.toString('base64')}`
+  const positions = await findTextPositions(composited)
+  return {
+    uri: `data:image/png;base64,${composited.toString('base64')}`,
+    ...positions,
+  }
 }
 
 // ─── Carousel render (8 × 1080×1080 PNGs) ────────────────────────────────────
