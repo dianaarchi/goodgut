@@ -68,9 +68,10 @@ export function renderSlide1(d, P, bgImageUri = null) {
         whiteSpace: 'nowrap',
       } }, d.hookTeaser),
 
-      // Eyebrow — left border, rotated 90° (reads top→bottom, mirrors right-side branding)
+      // Eyebrow — left border, rotated 90° (reads top→bottom)
+      // left: 28 offsets the rotation anchor so the text lands at x≈8–28px (in the margin)
       h('div', { style: {
-        position: 'absolute', top: '20%', left: 0,
+        position: 'absolute', top: '20%', left: 28,
         display: 'flex',
         transform: 'rotate(90deg)', transformOrigin: 'left top',
       } },
