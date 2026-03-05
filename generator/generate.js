@@ -133,7 +133,7 @@ async function generateGeminiImage(topic, dateStr) {
       'award-winning editorial photography, macro close-up of fermented foods or gut microbiome ' +
       'visualised as bioluminescent organisms, deep blacks, acid green and electric blue accents, ' +
       'cinematic lighting, Wired magazine aesthetic, no text, no people'
-    const prompt = `Create a striking visual image for a gut health Instagram post on the topic: "${topic}". Visual style: ${styleHint}. IMPORTANT: zero text, zero words, zero letters or typography anywhere in the image — purely visual, no captions, no labels. No human figures. Symbolic, abstract or close-up composition that evokes the topic visually.`
+    const prompt = `Create a striking visual image for a gut health Instagram post on the topic: "${topic}". Visual style: ${styleHint}. Composition: surrealist and abstract, asymmetric and off-balance, full-bleed with no empty space — elements bleeding off the edges. NO frames, NO borders, NO decorative borders, NO rectangular or circular frame enclosing the image. The illustration fills the entire canvas edge-to-edge with no containing frame. IMPORTANT: zero text, zero words, zero letters or typography anywhere in the image — purely visual, no captions, no labels. No human figures.`
 
     const result = await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
