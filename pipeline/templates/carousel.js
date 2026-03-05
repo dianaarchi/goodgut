@@ -49,50 +49,61 @@ function root(bg, ...children) {
 
 // ─── Slide 1 — Hook (dark, accent block right) ────────────────────────────────
 
-export function renderSlide1(d, P, slide1Bg = null) {
+export function renderSlide1(d, P, bgImageUri = null) {
   // ── Image variant: full-bleed woodcut composited on accent bg ─────────────
-  if (slide1Bg) {
+  if (bgImageUri) {
     return root(P.accent,
       // Full-bleed composited woodcut (multiply: white→accent, ink stays black)
       h('div', { style: {
         position: 'absolute', top: 0, right: 0, bottom: 0, left: 0,
-        backgroundImage: `url(${slide1Bg.uri})`,
+        backgroundImage: `url(${bgImageUri})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       } }),
 
-      // Vertical branding top-right (black)
-      h('div', { style: { position: 'absolute', top: '15%', right: 0, width: '32%',
-                          display: 'flex', transform: 'rotate(-90deg)', transformOrigin: 'right top' } },
-        h('span', { style: { fontFamily: 'Space Mono', fontSize: 26, color: P.text2,
-                              letterSpacing: 9, textTransform: 'uppercase', whiteSpace: 'nowrap' } },
-          'the.goodgut.guide',
-        ),
+      // Teaser — top border strip, horizontal
+      h('span', { style: {
+        position: 'absolute', top: 28, left: 62,
+        fontFamily: 'Space Mono', fontSize: 26, color: P.text2,
+        whiteSpace: 'nowrap',
+      } }, d.hookTeaser),
+
+      // Eyebrow — left border, rotated 90° (reads top→bottom)
+      // left: 28 offsets the rotation anchor so the text lands at x≈8–28px (in the margin)
+      h('div', { style: {
+        position: 'absolute', top: '20%', left: 28,
+        display: 'flex',
+        transform: 'rotate(90deg)', transformOrigin: 'left top',
+      } },
+        h('span', { style: {
+          fontFamily: 'Space Mono', fontSize: 23, color: P.text2,
+          letterSpacing: 9, textTransform: 'uppercase', whiteSpace: 'nowrap',
+        } }, d.hookEyebrow),
       ),
 
-      // Teaser — placed at cleanest grid-snapped row in top 25%
-      h('span', { style: { position: 'absolute', top: slide1Bg.teaserTop, left: 62,
-                            fontFamily: 'Space Mono', fontSize: 28, color: P.text2 } },
-        d.hookTeaser,
-      ),
-
-      // Eyebrow — independently placed at cleanest grid-snapped row in mid band
-      h('span', { style: { position: 'absolute', top: slide1Bg.eyebrowTop, left: 62,
-                            fontFamily: 'Space Mono', fontSize: 23, color: P.text2,
-                            letterSpacing: 11, textTransform: 'uppercase' } },
-        d.hookEyebrow,
+      // Branding — right border, rotated -90° (unchanged from standard variant)
+      h('div', { style: {
+        position: 'absolute', top: '15%', right: 0, width: '32%',
+        display: 'flex', transform: 'rotate(-90deg)', transformOrigin: 'right top',
+      } },
+        h('span', { style: {
+          fontFamily: 'Space Mono', fontSize: 26, color: P.text2,
+          letterSpacing: 9, textTransform: 'uppercase', whiteSpace: 'nowrap',
+        } }, 'the.goodgut.guide'),
       ),
 
       // Title — anchored bottom-left, always fixed
-      h('h1', { style: { position: 'absolute', bottom: 80, left: 62, right: '10%',
-                          fontFamily: 'Anton', fontSize: 125, fontWeight: 400, color: P.text2,
-                          lineHeight: 0.92, margin: 0, textTransform: 'uppercase', whiteSpace: 'pre-line' } },
-        d.hookTitle,
-      ),
+      h('h1', { style: {
+        position: 'absolute', bottom: 80, left: 62, right: '10%',
+        fontFamily: 'Anton', fontSize: 125, fontWeight: 400, color: P.text2,
+        lineHeight: 0.92, margin: 0, textTransform: 'uppercase', whiteSpace: 'pre-line',
+      } }, d.hookTitle),
 
-      // Arrow (black)
-      h('span', { style: { position: 'absolute', bottom: 80, right: 62,
-                            fontFamily: 'Anton', fontSize: 57, color: P.text2 } }, '→'),
+      // Arrow
+      h('span', { style: {
+        position: 'absolute', bottom: 80, right: 62,
+        fontFamily: 'Anton', fontSize: 57, color: P.text2,
+      } }, '→'),
     )
   }
 
