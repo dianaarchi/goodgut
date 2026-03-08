@@ -1,8 +1,9 @@
 import 'dotenv/config'
 import http from 'http'
 import { createReadStream } from 'fs'
-import { stat } from 'fs/promises'
+import { stat, readdir, readFile } from 'fs/promises'
 import { basename, dirname, join } from 'path'
+import { fileURLToPath } from 'url'
 
 const IG_API = 'https://graph.facebook.com/v21.0'
 const SERVER_PORT = 8081
@@ -144,4 +145,64 @@ export async function postStories(pngPaths) {
     server.close()
     console.log('[post] Image server closed')
   }
+}
+
+// ─── CLI entry point ──────────────────────────────────────────────────────────
+
+const __filename = fileURLToPath(import.meta.url)
+
+if (process.argv[1] === __filename) {
+  const args    = process.argv.slice(2)
+  const typeIdx = args.indexOf('--type')
+  const type    = typeIdx !== -1 ? args[typeIdx + 1] : null
+  const full    = args.includes('--full')
+
+  const ROOT   = join(dirname(__filename), '..')
+  const outDir = join(ROOT, process.env.OUTPUT_DIR ?? 'output')
+
+  async function loadLatestContent() {
+    const files = (await readdir(outDir).catch(() => []))
+      .filter(f => /^content-\d{4}-\d{2}-\d{2}\.json$/.test(f))
+      .sort()
+    if (!files.length) throw new Error('No content JSON found in output/')
+    return JSON.parse(await readFile(join(outDir, files[files.length - 1]), 'utf8'))
+  }
+
+  async function findPngs(pattern) {
+    const files = (await readdir(outDir).catch(() => []))
+      .filter(f => pattern.test(f))
+      .sort()
+      .map(f => join(outDir, f))
+    if (!files.length) throw new Error(`No PNGs found matching ${pattern}`)
+    return files
+  }
+
+  async function main() {
+    if (!type && !full) {
+      console.error('Usage: node pipeline/post.js --type carousel|stories')
+      console.error('       node pipeline/post.js --full')
+      process.exit(1)
+    }
+
+    const content = await loadLatestContent()
+    const date = content.date
+    console.log(`[post] Using content for ${date}`)
+
+    if (type === 'carousel' || full) {
+      const pngs = await findPngs(new RegExp(`^${date}-carousel-\\d+\\.png$`))
+      console.log(`[post] Carousel: ${pngs.length} slides`)
+      await postCarousel(pngs, content.carousel.caption)
+    }
+
+    if (type === 'stories' || full) {
+      const pngs = await findPngs(new RegExp(`^${date}-story-\\d+\\.png$`))
+      console.log(`[post] Stories: ${pngs.length} slides`)
+      await postStories(pngs)
+    }
+  }
+
+  main().catch(err => {
+    console.error('[post] Fatal:', err.message)
+    process.exit(1)
+  })
 }
